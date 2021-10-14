@@ -24,6 +24,9 @@ class HomeActivity : AppCompatActivity() {
         val sendIntent = Intent().apply {
             // TODO 1: Configure to support text sending/sharing and then attach the text as intent's extra.
 
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, text)
+            type = "text/plain";
 
 
         }
