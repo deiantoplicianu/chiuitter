@@ -69,6 +69,12 @@ class HomeActivity : AppCompatActivity() {
 
             // TODO 6: Check if text is not null or empty, then set the new "chiuit" content.
 
+            if(text.isNullOrEmpty()) {
+                return;
+            } else {
+                txv_content.text = text;
+            }
+
 
         }
     }
