@@ -65,6 +65,7 @@ class HomeActivity : AppCompatActivity() {
         data?.let {
             // TODO 5: Extract the text from result intent.
 
+            val text = data.getStringExtra(ComposeActivity.EXTRA_TEXT)
 
             // TODO 6: Check if text is not null or empty, then set the new "chiuit" content.
 
