@@ -42,6 +42,10 @@ class HomeActivity : AppCompatActivity() {
     private fun composeChiuit() {
         // TODO 2: Create an explicit intent which points to ComposeActivity.
 
+        val cmpactivityIntent = Intent(this, ComposeActivity::class.java).apply {
+
+        }
+
 
         // TODO 3: Start a new activity with the previously defined intent.
         // We start a new activity that we expect to return the acquired text as the result.
