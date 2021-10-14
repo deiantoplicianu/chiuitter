@@ -50,6 +50,8 @@ class HomeActivity : AppCompatActivity() {
         // TODO 3: Start a new activity with the previously defined intent.
         // We start a new activity that we expect to return the acquired text as the result.
 
+        startActivityForResult(intent, COMPOSE_REQUEST_CODE);
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
