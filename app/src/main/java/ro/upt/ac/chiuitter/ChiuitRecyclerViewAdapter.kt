@@ -43,6 +43,8 @@ class ChiuitRecyclerViewAdapter(
 
         fun bind(chiuit: Chiuit) {
             TODO("11. Set the text view with the content of chiuit's description")
+
+            itemView.txv_content.setText(chiuit.description)
         }
 
     }
