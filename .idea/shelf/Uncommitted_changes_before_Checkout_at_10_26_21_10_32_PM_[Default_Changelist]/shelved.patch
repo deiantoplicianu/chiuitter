@@ -1,0 +1,50 @@
+Index: app/src/main/java/ro/upt/ac/chiuitter/HomeActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ro.upt.ac.chiuitter\n\nimport android.app.Activity\nimport android.content.Intent\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\n\nclass HomeActivity : AppCompatActivity() {\n\n    private val dummyChiuitStore = DummyChiuitStore()\n\n    private lateinit var listAdapter: ChiuitRecyclerViewAdapter\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.view_home)\n\n        initList()\n    }\n\n    private fun initList() {\n        val chiuitList = dummyChiuitStore.getAllData()\n\n        TODO(\"7. Instantiate the adapter, then setup the recycler view list\")\n    }\n\n    /*\n    Defines text sharing/sending *implicit* intent, opens the application chooser menu,\n    and starts a new activity which supports sharing/sending text.\n     */\n    private fun shareChiuit(text: String) {\n        val sendIntent = Intent().apply {\n            // TODO 1: Configure to support text sending/sharing and then attach the text as intent's extra.\n\n            action = Intent.ACTION_SEND\n            putExtra(Intent.EXTRA_TEXT, text)\n            type = \"text/plain\";\n\n        }\n\n        val intentChooser = Intent.createChooser(sendIntent, \"\")\n\n        startActivity(intentChooser)\n    }\n\n    /*\n    Defines an *explicit* intent which will be used to start ComposeActivity.\n     */\n    private fun composeChiuit() {\n        // TODO 2: Create an explicit intent which points to ComposeActivity.\n\n        val cmpactivityIntent = Intent(this, ComposeActivity::class.java).apply {\n\n        }\n\n\n        // TODO 3: Start a new activity with the previously defined intent.\n        // We start a new activity that we expect to return the acquired text as the result.\n\n        startActivityForResult(intent, COMPOSE_REQUEST_CODE);\n\n    }\n\n    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {\n        when (requestCode) {\n            COMPOSE_REQUEST_CODE -> if (resultCode == Activity.RESULT_OK) extractText(data)\n            else -> super.onActivityResult(requestCode, resultCode, data)\n        }\n    }\n\n    private fun extractText(data: Intent?) {\n        data?.let {\n            // TODO 5: Extract the text from result intent.\n\n            val text = data.getStringExtra(ComposeActivity.EXTRA_TEXT)\n\n            // TODO 6: Check if text is not null or empty, then set the new \"chiuit\" content.\n\n            if(text.isNullOrEmpty()) {\n                return;\n            } else {\n                txv_content.text = text;\n            }\n\n\n            TODO(\"13. Instantiate a new chiuit object that add it to the adapter\")\n        }\n    }\n\n    companion object {\n        const val COMPOSE_REQUEST_CODE = 1213\n    }\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/HomeActivity.kt	(revision d531e072a67a4ce0894a387e536c58000243492e)
++++ app/src/main/java/ro/upt/ac/chiuitter/HomeActivity.kt	(date 1635276692000)
+@@ -49,7 +49,7 @@
+     private fun composeChiuit() {
+         // TODO 2: Create an explicit intent which points to ComposeActivity.
+ 
+-        val cmpactivityIntent = Intent(this, ComposeActivity::class.java).apply {
++        val intent = Intent(this, ComposeActivity::class.java).apply {
+ 
+         }
+ 
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'com.android.application'\n\napply plugin: 'kotlin-android'\n\napply plugin: 'kotlin-android-extensions'\n\nandroid {\n\n    compileSdkVersion 30\n\n    defaultConfig {\n        applicationId \"ro.upt.ac.chiuitter\"\n        minSdkVersion 22\n        targetSdkVersion 30\n        versionCode 1\n        versionName \"1.0\"\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\n    }\n\n    buildTypes {\n        release {\n            minifyEnabled false\n            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'\n        }\n    }\n}\n\ndependencies {\n    implementation fileTree(dir: 'libs', include: ['*.jar'])\n    implementation\"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version\"\n\n    implementation 'androidx.appcompat:appcompat:1.1.0'\n    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'\n\n    implementation 'com.google.android.material:material:1.0.0'\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(revision d531e072a67a4ce0894a387e536c58000243492e)
++++ app/build.gradle	(date 1635276692000)
+@@ -30,7 +30,7 @@
+     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+ 
+     implementation 'androidx.appcompat:appcompat:1.1.0'
+-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
++    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+ 
+     implementation 'com.google.android.material:material:1.0.0'
+ }
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\n\nbuildscript {\n    ext.kotlin_version = '1.3.50'\n    repositories {\n        google()\n        jcenter()\n    }\n    dependencies {\n        classpath 'com.android.tools.build:gradle:4.1.0'\n        classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version\"\n    }\n}\n\nallprojects {\n    repositories {\n        google()\n        jcenter()\n    }\n}\n\ntask clean(type: Delete) {\n    delete rootProject.buildDir\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- build.gradle	(revision d531e072a67a4ce0894a387e536c58000243492e)
++++ build.gradle	(date 1635276692000)
+@@ -22,3 +22,4 @@
+ task clean(type: Delete) {
+     delete rootProject.buildDir
+ }
++
