@@ -27,6 +27,8 @@ class ChiuitRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ChiuitViewHolder, position: Int) {
         TODO("10. Bind the view holder with chiuit data sample")
+
+        holder.bind(chiuitList[position])
     }
 
     fun addItem(chiuit: Chiuit) {
