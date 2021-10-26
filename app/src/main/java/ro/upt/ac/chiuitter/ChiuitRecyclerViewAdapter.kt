@@ -16,6 +16,7 @@ class ChiuitRecyclerViewAdapter(
 
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_chiuit, parent, false)
         return ChiuitViewHolder(view)
+
     }
 
     override fun getItemCount(): Int {
