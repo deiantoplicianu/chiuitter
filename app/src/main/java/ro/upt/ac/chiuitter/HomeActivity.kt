@@ -94,6 +94,8 @@ class HomeActivity : AppCompatActivity() {
 
 
             TODO("13. Instantiate a new chiuit object that add it to the adapter")
+            val chiuitNou = Chiuit(text)
+            listAdapter.addItem(chiuitNou)
         }
     }
 
