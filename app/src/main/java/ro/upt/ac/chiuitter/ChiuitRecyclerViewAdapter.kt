@@ -33,6 +33,8 @@ class ChiuitRecyclerViewAdapter(
 
     fun addItem(chiuit: Chiuit) {
         TODO("12. Add the new item to the list then SMARTLY notify an addition")
+        chiuitList.add(chiuit)
+        notifyDataSetChanged()
     }
 
     inner class ChiuitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
