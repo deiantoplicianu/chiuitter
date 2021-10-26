@@ -6,38 +6,10 @@
   android:layout_height="match_parent"
   tools:context=".HomeActivity">
 
-  <com.google.android.material.card.MaterialCardView
+  <androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/rv_chiuit_list"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp">
-
-    <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:padding="12dp"
-      android:orientation="horizontal">
-
-      <TextView
-        android:id="@+id/txv_content"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="5"
-        android:padding="4dp"
-        android:gravity="center"
-        android:text="@string/chiuit_example"
-        android:textSize="14sp"/>
-
-      <ImageButton
-        android:id="@+id/ibt_share"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_send"/>
-
-    </LinearLayout>
-
-  </com.google.android.material.card.MaterialCardView>
+    android:layout_height="match_parent"/>
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
     android:id="@+id/fab_add"

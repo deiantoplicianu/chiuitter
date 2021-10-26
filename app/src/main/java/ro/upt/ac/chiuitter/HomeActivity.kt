@@ -4,16 +4,24 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.view_home.*
 
 class HomeActivity : AppCompatActivity() {
+
+    private val dummyChiuitStore = DummyChiuitStore()
+
+    private lateinit var listAdapter: ChiuitRecyclerViewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.view_home)
 
-        ibt_share.setOnClickListener { shareChiuit(txv_content.text.toString()) }
-        fab_add.setOnClickListener { composeChiuit() }
+        initList()
+    }
+
+    private fun initList() {
+        val chiuitList = dummyChiuitStore.getAllData()
+
+        TODO("7. Instantiate the adapter, then setup the recycler view list")
     }
 
     /*
@@ -27,7 +35,6 @@ class HomeActivity : AppCompatActivity() {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, text)
             type = "text/plain";
-
 
         }
 
@@ -76,6 +83,7 @@ class HomeActivity : AppCompatActivity() {
             }
 
 
+            TODO("13. Instantiate a new chiuit object that add it to the adapter")
         }
     }
 
