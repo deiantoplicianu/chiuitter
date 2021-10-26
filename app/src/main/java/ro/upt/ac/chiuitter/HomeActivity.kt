@@ -24,7 +24,7 @@ class HomeActivity : AppCompatActivity() {
     private fun initList() {
         val chiuitList = dummyChiuitStore.getAllData()
 
-        TODO("7. Instantiate the adapter, then setup the recycler view list")
+        //TODO("7. Instantiate the adapter, then setup the recycler view list")
 
         listAdapter = ChiuitRecyclerViewAdapter(chiuitList.toMutableList()) {
             shareChiuit(it.description)
@@ -93,7 +93,7 @@ class HomeActivity : AppCompatActivity() {
             }
 
 
-            TODO("13. Instantiate a new chiuit object that add it to the adapter")
+            //TODO("13. Instantiate a new chiuit object that add it to the adapter")
             val chiuitNou = Chiuit(text)
             listAdapter.addItem(chiuitNou)
         }
