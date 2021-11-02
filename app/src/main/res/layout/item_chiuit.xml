@@ -29,6 +29,8 @@
       android:background="@android:color/transparent"
       android:src="@drawable/ic_send"/>
 
+     <!--TODO: Add a new button for delete action-->
+
   </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

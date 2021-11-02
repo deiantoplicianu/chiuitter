@@ -1,13 +1,13 @@
-package ro.upt.ac.chiuitter
+package ro.upt.ac.chiuitter.view
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.view_compose.*
+import ro.upt.ac.chiuitter.R
 
 
-// TODO 4: All application components must be added to manifest. Make sure to add this one.
 class ComposeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
