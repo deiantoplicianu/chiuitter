@@ -37,7 +37,7 @@ class HomeActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@HomeActivity)
         }
 
-        viewModel.chiuitsLiveData.observe(this, Observer { chiuts ->
+        viewModel.chiuitsLiveData.observe(this, Observer { chiuits ->
             //TODO("Instantiate an adapter with the received list and assign it to recycler view")
             val listAdapter = ChiuitRecyclerViewAdapter(chiuits,
                     fun(chiuit: Chiuit): Unit = shareChiuit(chiuit.description), fun(chiuit): Unit = deleteChiuit(chiuit))
