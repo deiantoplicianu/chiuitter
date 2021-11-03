@@ -11,6 +11,7 @@ import kotlinx.android.synthetic.main.view_home.*
 import ro.upt.ac.chiuitter.R
 import ro.upt.ac.chiuitter.data.database.ChiuitDbStore
 import ro.upt.ac.chiuitter.data.database.RoomDatabase
+import ro.upt.ac.chiuitter.domain.Chiuit
 import ro.upt.ac.chiuitter.viewmodel.HomeViewModel
 import ro.upt.ac.chiuitter.viewmodel.HomeViewModelFactory
 
@@ -37,7 +38,14 @@ class HomeActivity : AppCompatActivity() {
         }
 
         viewModel.chiuitsLiveData.observe(this, Observer { chiuts ->
-            TODO("Instantiate an adapter with the received list and assign it to recycler view")
+            //TODO("Instantiate an adapter with the received list and assign it to recycler view")
+            val listAdapter = ChiuitRecyclerViewAdapter(chiuits,
+                    fun(chiuit: Chiuit): Unit = shareChiuit(chiuit.description), fun(chiuit): Unit = deleteChiuit(chiuit))
+
+            rv_chiuit_list.apply {
+                setHasFixedSize(true)
+                adapter = listAdapter
+            }
         })
 
         viewModel.retrieveChiuits()
