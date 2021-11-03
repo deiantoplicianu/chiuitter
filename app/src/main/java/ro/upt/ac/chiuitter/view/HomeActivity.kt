@@ -59,8 +59,8 @@ class HomeActivity : AppCompatActivity() {
         val sendIntent = Intent().apply {
             TODO("Customize an implicit intent which triggers text sharing")
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, text.toString())
             type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, text.toString())
         }
 
         val intentChooser = Intent.createChooser(sendIntent, "")
