@@ -14,8 +14,6 @@ class ChiuitRecyclerViewAdapter(
         private val onShareClick: (Chiuit) -> (Unit),
         private val onDeleteClick: (Chiuit) -> (Unit)
 
-// TODO("Add a new callback triggered when delete button was pressed")
-
 ) : RecyclerView.Adapter<ChiuitRecyclerViewAdapter.ChiuitViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChiuitViewHolder {
@@ -35,7 +33,6 @@ class ChiuitRecyclerViewAdapter(
 
         init {
             itemView.ibt_share.setOnClickListener { onShareClick(chiuitList[adapterPosition]) }
-            TODO("Trigger delete callback same as for share")
             itemView.ibt_delete.setOnClickListener { onDeleteClick(chiuitList[adapterPosition]) }
         }
 
