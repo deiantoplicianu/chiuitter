@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.view_home.*
 import ro.upt.ac.chiuitter.R
 import ro.upt.ac.chiuitter.data.firebase.FirebaseChiuitStore
+import ro.upt.ac.chiuitter.domain.Chiuit
 import ro.upt.ac.chiuitter.viewmodel.HomeViewModel
 import ro.upt.ac.chiuitter.viewmodel.HomeViewModelFactory
 
@@ -36,7 +37,10 @@ class HomeActivity : AppCompatActivity() {
         }
 
         viewModel.chiuitsLiveData.observe(this, Observer { chiuts ->
-            TODO("Instantiate an adapter with the received items and assign it to recycler view")
+            //TODO("Instantiate an adapter with the received items and assign it to recycler view")
+            rv_chiuit_list.apply{
+                adapter = ChiuitRecyclerViewAdapter(chiuts, {shareChiuit(it.description)}, {onDeleteChiuit(it)})
+            }
         })
 
         viewModel.fetchChiuits()
@@ -48,7 +52,10 @@ class HomeActivity : AppCompatActivity() {
      */
     private fun shareChiuit(text: String) {
         val sendIntent = Intent().apply {
-            TODO("Customize an implicit intent which triggers text sharing")
+            //TODO("Customize an implicit intent which triggers text sharing")
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, text)
         }
 
         val intentChooser = Intent.createChooser(sendIntent, "")
@@ -71,6 +78,10 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun onDeleteChiuit(chiuit:Chiuit) {
+        viewModel.removeChiuit(chiuit)
+    }
+
     private fun extractText(data: Intent?) {
         data?.let {
             val text = data.getStringExtra(ComposeActivity.EXTRA_TEXT)
@@ -79,6 +90,8 @@ class HomeActivity : AppCompatActivity() {
             }
         }
     }
+
+
 
     companion object {
         const val COMPOSE_REQUEST_CODE = 1213

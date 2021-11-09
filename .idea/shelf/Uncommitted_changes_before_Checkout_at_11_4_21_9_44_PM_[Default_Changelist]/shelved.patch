@@ -1,0 +1,87 @@
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'com.android.application'\napply plugin: 'kotlin-android'\napply plugin: 'kotlin-android-extensions'\napply plugin: 'kotlin-kapt'\n\nandroid {\n\n    compileSdkVersion 30\n\n    defaultConfig {\n        applicationId \"ro.upt.ac.chiuitter\"\n        minSdkVersion 22\n        targetSdkVersion 30\n        versionCode 1\n        versionName \"1.0\"\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\n    }\n\n    buildTypes {\n        release {\n            minifyEnabled false\n            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'\n        }\n    }\n}\n\ndependencies {\n    def lifecycle_version = \"2.0.0\"\n    def room_version = \"1.1.1\"\n\n    implementation fileTree(dir: 'libs', include: ['*.jar'])\n    implementation\"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version\"\n\n    implementation 'androidx.appcompat:appcompat:1.0.0'\n    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'\n    implementation 'com.google.android.material:material:1.0.0'\n\n    implementation \"androidx.lifecycle:lifecycle-extensions:$lifecycle_version\"\n\n    implementation \"android.arch.persistence.room:runtime:$room_version\"\n    kapt \"android.arch.persistence.room:compiler:$room_version\"\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(revision a8ffa2618debb9da9ae830ab6310d5c225afd3a5)
++++ app/build.gradle	(date 1636054776000)
+@@ -1,3 +1,4 @@
++apply plugin: 'com.android.application'
+ apply plugin: 'com.android.application'
+ apply plugin: 'kotlin-android'
+ apply plugin: 'kotlin-android-extensions'
+@@ -5,12 +6,12 @@
+ 
+ android {
+ 
+-    compileSdkVersion 30
++    compileSdkVersion 29
+ 
+     defaultConfig {
+         applicationId "ro.upt.ac.chiuitter"
+         minSdkVersion 22
+-        targetSdkVersion 30
++        targetSdkVersion 29
+         versionCode 1
+         versionName "1.0"
+         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+@@ -25,6 +26,7 @@
+ }
+ 
+ dependencies {
++    implementation 'androidx.room:room-common:2.2.6'
+     def lifecycle_version = "2.0.0"
+     def room_version = "1.1.1"
+ 
+@@ -39,4 +41,4 @@
+ 
+     implementation "android.arch.persistence.room:runtime:$room_version"
+     kapt "android.arch.persistence.room:compiler:$room_version"
+-}
++}
+\ No newline at end of file
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    package=\"ro.upt.ac.chiuitter\">\n\n  <application\n    android:allowBackup=\"true\"\n    android:icon=\"@mipmap/ic_launcher\"\n    android:label=\"@string/app_name\"\n    android:roundIcon=\"@mipmap/ic_launcher_round\"\n    android:supportsRtl=\"true\"\n    android:theme=\"@style/AppTheme\">\n    <activity android:name=\".view.HomeActivity\">\n      <intent-filter>\n        <action android:name=\"android.intent.action.MAIN\"/>\n\n        <category android:name=\"android.intent.category.LAUNCHER\"/>\n      </intent-filter>\n    </activity>\n    <activity android:name=\".view.ComposeActivity\"/>\n\n    <activity android:name=\".ComposeActivity\">\n      <intent-filter>\n        <action android:name=\"android.intent.action.MAIN\"/>\n        <category android:name=\"android.intent.category.LAUNCHER\"/>\n      </intent-filter>\n    </activity>\n\n  </application>\n\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision a8ffa2618debb9da9ae830ab6310d5c225afd3a5)
++++ app/src/main/AndroidManifest.xml	(date 1636052362000)
+@@ -4,12 +4,12 @@
+     package="ro.upt.ac.chiuitter">
+ 
+   <application
+-    android:allowBackup="true"
+-    android:icon="@mipmap/ic_launcher"
+-    android:label="@string/app_name"
+-    android:roundIcon="@mipmap/ic_launcher_round"
+-    android:supportsRtl="true"
+-    android:theme="@style/AppTheme">
++      android:allowBackup="true"
++      android:icon="@mipmap/ic_launcher"
++      android:label="@string/app_name"
++      android:roundIcon="@mipmap/ic_launcher_round"
++      android:supportsRtl="true"
++      android:theme="@style/AppTheme">
+     <activity android:name=".view.HomeActivity">
+       <intent-filter>
+         <action android:name="android.intent.action.MAIN"/>
+@@ -19,13 +19,6 @@
+     </activity>
+     <activity android:name=".view.ComposeActivity"/>
+ 
+-    <activity android:name=".ComposeActivity">
+-      <intent-filter>
+-        <action android:name="android.intent.action.MAIN"/>
+-        <category android:name="android.intent.category.LAUNCHER"/>
+-      </intent-filter>
+-    </activity>
+-
+   </application>
+ 
+ </manifest>
+\ No newline at end of file

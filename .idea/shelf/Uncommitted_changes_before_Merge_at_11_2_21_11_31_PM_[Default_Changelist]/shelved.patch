@@ -1,0 +1,238 @@
+Index: app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitDbStore.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ro.upt.ac.chiuitter.data.database\n\nimport ro.upt.ac.chiuitter.domain.ChiuitRepository\nimport ro.upt.ac.chiuitter.domain.Chiuit\n\nclass ChiuitDbStore(private val appDatabase: AppDatabase) : ChiuitRepository {\n\n    override fun getAll(): List<Chiuit> {\n        return appDatabase.chiuitDao().getAll().map { it.toDomainModel() }\n    }\n\n    override fun addChiuit(chiuit: Chiuit) {\n        TODO (\"Insert the new entry\")\n    }\n\n    override fun removeChiuit(chiuit: Chiuit) {\n        TODO (\"Insert the specified entry\")\n    }\n\n\n    private fun Chiuit.toDbModel() = ChiuitEntity(timestamp, description)\n\n    private fun ChiuitEntity.toDomainModel() = Chiuit(timestamp, description)\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitDbStore.kt	(revision 20b1cd668ed1cc5ac641c42c8a3375093787c09d)
++++ app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitDbStore.kt	(date 1635888019000)
+@@ -10,11 +10,13 @@
+     }
+ 
+     override fun addChiuit(chiuit: Chiuit) {
+-        TODO ("Insert the new entry")
++       // TODO ("Insert the new entry")
++        appDatabase.chiuitDao().insert(chiuit.toDbModel())
+     }
+ 
+     override fun removeChiuit(chiuit: Chiuit) {
+-        TODO ("Insert the specified entry")
++       // TODO ("Insert the specified entry")
++        appDatabase.chiuitDao().delete(chiuit.toDbModel())
+     }
+ 
+ 
+Index: app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitDao.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ro.upt.ac.chiuitter.data.database\n\nimport androidx.room.Dao\nimport androidx.room.Query\n\n\n@Dao\ninterface ChiuitDao {\n\n    @Query(\"SELECT * FROM chiuits\")\n    fun getAll(): List<ChiuitEntity>\n\n\n    // TODO(\"Define insert\")\n\n\n    // TODO(\"Define delete\")\n\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitDao.kt	(revision 20b1cd668ed1cc5ac641c42c8a3375093787c09d)
++++ app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitDao.kt	(date 1635887933000)
+@@ -1,6 +1,8 @@
+ package ro.upt.ac.chiuitter.data.database
+ 
+ import androidx.room.Dao
++import androidx.room.Delete
++import androidx.room.Insert
+ import androidx.room.Query
+ 
+ 
+@@ -12,9 +14,13 @@
+ 
+ 
+     // TODO("Define insert")
++    @Insert
++    fun insert(chiuit: ChiuitEntity)
+ 
+ 
+     // TODO("Define delete")
++    @Delete
++    fun delete(chiuit: ChiuitEntity)
+ 
+ 
+ }
+\ No newline at end of file
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'com.android.application'\napply plugin: 'kotlin-android'\napply plugin: 'kotlin-android-extensions'\napply plugin: 'kotlin-kapt'\n\nandroid {\n\n    compileSdkVersion 29\n\n    defaultConfig {\n        applicationId \"ro.upt.ac.chiuitter\"\n        minSdkVersion 22\n        targetSdkVersion 29\n        versionCode 1\n        versionName \"1.0\"\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\n    }\n\n    buildTypes {\n        release {\n            minifyEnabled false\n            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'\n        }\n    }\n}\n\ndependencies {\n    def lifecycle_version = \"2.0.0\"\n    def room_version = \"1.1.1\"\n\n    implementation fileTree(dir: 'libs', include: ['*.jar'])\n    implementation\"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version\"\n\n    implementation 'androidx.appcompat:appcompat:1.0.0'\n    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'\n    implementation 'com.google.android.material:material:1.0.0'\n\n    implementation \"androidx.lifecycle:lifecycle-extensions:$lifecycle_version\"\n\n    implementation \"android.arch.persistence.room:runtime:$room_version\"\n    kapt \"android.arch.persistence.room:compiler:$room_version\"\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/build.gradle	(revision 20b1cd668ed1cc5ac641c42c8a3375093787c09d)
++++ app/build.gradle	(date 1635886803000)
+@@ -36,6 +36,8 @@
+     implementation 'com.google.android.material:material:1.0.0'
+ 
+     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
++    implementation "android.arch.lifecycle:extensions:1.1.1"
++    implementation "androidx.lifecycle:lifecycle-extensions:VERSION"
+ 
+     implementation "android.arch.persistence.room:runtime:$room_version"
+     kapt "android.arch.persistence.room:compiler:$room_version"
+Index: app/src/main/java/ro/upt/ac/chiuitter/view/ChiuitRecyclerViewAdapter.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ro.upt.ac.chiuitter.view\n\nimport android.view.LayoutInflater\nimport android.view.View\nimport android.view.ViewGroup\nimport androidx.recyclerview.widget.RecyclerView\nimport kotlinx.android.synthetic.main.item_chiuit.view.*\nimport ro.upt.ac.chiuitter.R\nimport ro.upt.ac.chiuitter.domain.Chiuit\n\n\nclass ChiuitRecyclerViewAdapter(\n        private val chiuitList: List<Chiuit>,\n        private val onShareClick: (Chiuit) -> (Unit)\n\n// TODO(\"Add a new callback triggered when delete button was pressed\")\n\n) : RecyclerView.Adapter<ChiuitRecyclerViewAdapter.ChiuitViewHolder>() {\n\n    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChiuitViewHolder {\n        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_chiuit, parent, false)\n        return ChiuitViewHolder(view)\n    }\n\n    override fun getItemCount(): Int {\n        return chiuitList.size\n    }\n\n    override fun onBindViewHolder(holder: ChiuitViewHolder, position: Int) {\n        holder.bind(chiuitList[position])\n    }\n\n    inner class ChiuitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {\n\n        init {\n            itemView.ibt_share.setOnClickListener { onShareClick(chiuitList[adapterPosition]) }\n            TODO(\"Trigger delete callback same as for share\")\n        }\n\n        fun bind(chiuit: Chiuit) {\n            itemView.txv_content.text = chiuit.description\n        }\n\n    }\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/view/ChiuitRecyclerViewAdapter.kt	(revision 20b1cd668ed1cc5ac641c42c8a3375093787c09d)
++++ app/src/main/java/ro/upt/ac/chiuitter/view/ChiuitRecyclerViewAdapter.kt	(date 1635888203000)
+@@ -34,7 +34,8 @@
+ 
+         init {
+             itemView.ibt_share.setOnClickListener { onShareClick(chiuitList[adapterPosition]) }
+-            TODO("Trigger delete callback same as for share")
++            //TODO("Trigger delete callback same as for share")
++            //itemView.ibt_delete.setOnClickListener { onDeleteClick(chiuitList[adapterPosition])}
+         }
+ 
+         fun bind(chiuit: Chiuit) {
+Index: app/src/main/java/ro/upt/ac/chiuitter/view/HomeActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ro.upt.ac.chiuitter.view\n\nimport android.app.Activity\nimport android.content.Intent\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\nimport androidx.lifecycle.Observer\nimport androidx.lifecycle.ViewModelProviders\nimport androidx.recyclerview.widget.LinearLayoutManager\nimport kotlinx.android.synthetic.main.view_home.*\nimport ro.upt.ac.chiuitter.R\nimport ro.upt.ac.chiuitter.data.database.ChiuitDbStore\nimport ro.upt.ac.chiuitter.data.database.RoomDatabase\nimport ro.upt.ac.chiuitter.viewmodel.HomeViewModel\nimport ro.upt.ac.chiuitter.viewmodel.HomeViewModelFactory\n\n\nclass HomeActivity : AppCompatActivity() {\n\n    private lateinit var viewModel: HomeViewModel\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.view_home)\n\n        fab_add.setOnClickListener { composeChiuit() }\n\n        val factory = HomeViewModelFactory(ChiuitDbStore(RoomDatabase.getDb(this)))\n        viewModel = ViewModelProviders.of(this, factory).get(HomeViewModel::class.java)\n\n        initList()\n    }\n\n    private fun initList() {\n        rv_chiuit_list.apply {\n            layoutManager = LinearLayoutManager(this@HomeActivity)\n        }\n\n        viewModel.chiuitsLiveData.observe(this, Observer { chiuts ->\n            TODO(\"Instantiate an adapter with the received list and assign it to recycler view\")\n        })\n\n        viewModel.retrieveChiuits()\n    }\n\n    /*\n    Defines text sharing/sending *implicit* intent, opens the application chooser menu\n    and then starts a new activity which supports sharing/sending text.\n     */\n    private fun shareChiuit(text: String) {\n        val sendIntent = Intent().apply {\n            TODO(\"Customize an implicit intent which triggers text sharing\")\n        }\n\n        val intentChooser = Intent.createChooser(sendIntent, \"\")\n\n        startActivity(intentChooser)\n    }\n\n    /*\n    Defines an *explicit* intent which will be used to start ComposeActivity.\n     */\n    private fun composeChiuit() {\n        val intent = Intent(this, ComposeActivity::class.java)\n        startActivityForResult(intent, COMPOSE_REQUEST_CODE)\n    }\n\n    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {\n        when (requestCode) {\n            COMPOSE_REQUEST_CODE -> if (resultCode == Activity.RESULT_OK) extractText(data)\n            else -> super.onActivityResult(requestCode, resultCode, data)\n        }\n    }\n\n    private fun extractText(data: Intent?) {\n        data?.let {\n            val text = data.getStringExtra(ComposeActivity.EXTRA_TEXT)\n            if (!text.isNullOrBlank()) {\n                viewModel.addChiuit(text)\n            }\n        }\n    }\n\n    companion object {\n        const val COMPOSE_REQUEST_CODE = 1213\n    }\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/view/HomeActivity.kt	(revision 20b1cd668ed1cc5ac641c42c8a3375093787c09d)
++++ app/src/main/java/ro/upt/ac/chiuitter/view/HomeActivity.kt	(date 1635888345000)
+@@ -11,10 +11,10 @@
+ import ro.upt.ac.chiuitter.R
+ import ro.upt.ac.chiuitter.data.database.ChiuitDbStore
+ import ro.upt.ac.chiuitter.data.database.RoomDatabase
++import ro.upt.ac.chiuitter.domain.Chiuit
+ import ro.upt.ac.chiuitter.viewmodel.HomeViewModel
+ import ro.upt.ac.chiuitter.viewmodel.HomeViewModelFactory
+ 
+-
+ class HomeActivity : AppCompatActivity() {
+ 
+     private lateinit var viewModel: HomeViewModel
+@@ -37,8 +37,13 @@
+         }
+ 
+         viewModel.chiuitsLiveData.observe(this, Observer { chiuts ->
+-            TODO("Instantiate an adapter with the received list and assign it to recycler view")
+-        })
++            //TODO("Instantiate an adapter with the received list and assign it to recycler view")
++           /* val lstAdapter = ChiuitRecyclerViewAdapter(chiuts, fun(chiuit: Chiuit): Unit = shareChiuit(chiuit.description), fun(chiuit): Unit = deleteChiuit(chiuit))
++            rv_chiuit_list.apply {
++                setHasFixedSize(true)
++                adapter = lstAdapter
++            }
++        })*/
+ 
+         viewModel.retrieveChiuits()
+     }
+@@ -67,7 +72,7 @@
+ 
+     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+         when (requestCode) {
+-            COMPOSE_REQUEST_CODE -> if (resultCode == Activity.RESULT_OK) extractText(data)
++            COMPOSE_REQUEST_CODE -> if (resultCode == RESULT_OK) extractText(data)
+             else -> super.onActivityResult(requestCode, resultCode, data)
+         }
+     }
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"CompilerConfiguration\">\n    <wildcardResourcePatterns>\n      <entry name=\"!?*.java\" />\n      <entry name=\"!?*.form\" />\n      <entry name=\"!?*.class\" />\n      <entry name=\"!?*.groovy\" />\n      <entry name=\"!?*.scala\" />\n      <entry name=\"!?*.flex\" />\n      <entry name=\"!?*.kt\" />\n      <entry name=\"!?*.clj\" />\n    </wildcardResourcePatterns>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/compiler.xml	(revision 20b1cd668ed1cc5ac641c42c8a3375093787c09d)
++++ .idea/compiler.xml	(date 1635886793000)
+@@ -11,5 +11,6 @@
+       <entry name="!?*.kt" />
+       <entry name="!?*.clj" />
+     </wildcardResourcePatterns>
++    <bytecodeTargetLevel target="1.8" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"GradleSettings\">\n    <option name=\"linkedExternalProjectsSettings\">\n      <GradleProjectSettings>\n        <option name=\"distributionType\" value=\"DEFAULT_WRAPPED\" />\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\n        <option name=\"modules\">\n          <set>\n            <option value=\"$PROJECT_DIR$\" />\n            <option value=\"$PROJECT_DIR$/app\" />\n          </set>\n        </option>\n        <option name=\"resolveModulePerSourceSet\" value=\"false\" />\n      </GradleProjectSettings>\n    </option>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/gradle.xml	(revision 20b1cd668ed1cc5ac641c42c8a3375093787c09d)
++++ .idea/gradle.xml	(date 1635886627000)
+@@ -1,8 +1,10 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
++  <component name="GradleMigrationSettings" migrationVersion="1" />
+   <component name="GradleSettings">
+     <option name="linkedExternalProjectsSettings">
+       <GradleProjectSettings>
++        <option name="testRunner" value="PLATFORM" />
+         <option name="distributionType" value="DEFAULT_WRAPPED" />
+         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+         <option name="modules">
+@@ -12,6 +14,7 @@
+           </set>
+         </option>
+         <option name="resolveModulePerSourceSet" value="false" />
++        <option name="useQualifiedModuleNames" value="true" />
+       </GradleProjectSettings>
+     </option>
+   </component>
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"NullableNotNullManager\">\n    <option name=\"myDefaultNullable\" value=\"android.support.annotation.Nullable\" />\n    <option name=\"myDefaultNotNull\" value=\"android.support.annotation.NonNull\" />\n    <option name=\"myNullables\">\n      <value>\n        <list size=\"12\">\n          <item index=\"0\" class=\"java.lang.String\" itemvalue=\"org.jetbrains.annotations.Nullable\" />\n          <item index=\"1\" class=\"java.lang.String\" itemvalue=\"javax.annotation.Nullable\" />\n          <item index=\"2\" class=\"java.lang.String\" itemvalue=\"javax.annotation.CheckForNull\" />\n          <item index=\"3\" class=\"java.lang.String\" itemvalue=\"edu.umd.cs.findbugs.annotations.Nullable\" />\n          <item index=\"4\" class=\"java.lang.String\" itemvalue=\"android.support.annotation.Nullable\" />\n          <item index=\"5\" class=\"java.lang.String\" itemvalue=\"androidx.annotation.Nullable\" />\n          <item index=\"6\" class=\"java.lang.String\" itemvalue=\"androidx.annotation.RecentlyNullable\" />\n          <item index=\"7\" class=\"java.lang.String\" itemvalue=\"android.annotation.Nullable\" />\n          <item index=\"8\" class=\"java.lang.String\" itemvalue=\"org.checkerframework.checker.nullness.qual.Nullable\" />\n          <item index=\"9\" class=\"java.lang.String\" itemvalue=\"org.checkerframework.checker.nullness.compatqual.NullableDecl\" />\n          <item index=\"10\" class=\"java.lang.String\" itemvalue=\"org.checkerframework.checker.nullness.compatqual.NullableType\" />\n          <item index=\"11\" class=\"java.lang.String\" itemvalue=\"com.android.annotations.Nullable\" />\n        </list>\n      </value>\n    </option>\n    <option name=\"myNotNulls\">\n      <value>\n        <list size=\"11\">\n          <item index=\"0\" class=\"java.lang.String\" itemvalue=\"org.jetbrains.annotations.NotNull\" />\n          <item index=\"1\" class=\"java.lang.String\" itemvalue=\"javax.annotation.Nonnull\" />\n          <item index=\"2\" class=\"java.lang.String\" itemvalue=\"edu.umd.cs.findbugs.annotations.NonNull\" />\n          <item index=\"3\" class=\"java.lang.String\" itemvalue=\"android.support.annotation.NonNull\" />\n          <item index=\"4\" class=\"java.lang.String\" itemvalue=\"androidx.annotation.NonNull\" />\n          <item index=\"5\" class=\"java.lang.String\" itemvalue=\"androidx.annotation.RecentlyNonNull\" />\n          <item index=\"6\" class=\"java.lang.String\" itemvalue=\"android.annotation.NonNull\" />\n          <item index=\"7\" class=\"java.lang.String\" itemvalue=\"org.checkerframework.checker.nullness.qual.NonNull\" />\n          <item index=\"8\" class=\"java.lang.String\" itemvalue=\"org.checkerframework.checker.nullness.compatqual.NonNullDecl\" />\n          <item index=\"9\" class=\"java.lang.String\" itemvalue=\"org.checkerframework.checker.nullness.compatqual.NonNullType\" />\n          <item index=\"10\" class=\"java.lang.String\" itemvalue=\"com.android.annotations.NonNull\" />\n        </list>\n      </value>\n    </option>\n  </component>\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_1_7\" project-jdk-name=\"1.8\" project-jdk-type=\"JavaSDK\">\n    <output url=\"file://$PROJECT_DIR$/build/classes\" />\n  </component>\n  <component name=\"ProjectType\">\n    <option name=\"id\" value=\"Android\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/misc.xml	(revision 20b1cd668ed1cc5ac641c42c8a3375093787c09d)
++++ .idea/misc.xml	(date 1635886793000)
+@@ -39,7 +39,7 @@
+       </value>
+     </option>
+   </component>
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" project-jdk-name="1.8" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/build/classes" />
+   </component>
+   <component name="ProjectType">
+Index: .idea/jarRepositories.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/jarRepositories.xml	(date 1635886627000)
++++ .idea/jarRepositories.xml	(date 1635886627000)
+@@ -0,0 +1,25 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="RemoteRepositoriesConfiguration">
++    <remote-repository>
++      <option name="id" value="central" />
++      <option name="name" value="Maven Central repository" />
++      <option name="url" value="https://repo1.maven.org/maven2" />
++    </remote-repository>
++    <remote-repository>
++      <option name="id" value="jboss.community" />
++      <option name="name" value="JBoss Community repository" />
++      <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
++    </remote-repository>
++    <remote-repository>
++      <option name="id" value="BintrayJCenter" />
++      <option name="name" value="BintrayJCenter" />
++      <option name="url" value="https://jcenter.bintray.com/" />
++    </remote-repository>
++    <remote-repository>
++      <option name="id" value="Google" />
++      <option name="name" value="Google" />
++      <option name="url" value="https://dl.google.com/dl/android/maven2/" />
++    </remote-repository>
++  </component>
++</project>
+\ No newline at end of file

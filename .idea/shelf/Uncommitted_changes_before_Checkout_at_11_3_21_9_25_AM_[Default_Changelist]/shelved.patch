@@ -1,0 +1,43 @@
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    package=\"ro.upt.ac.chiuitter\">\n\n  <application\n    android:allowBackup=\"true\"\n    android:icon=\"@mipmap/ic_launcher\"\n    android:label=\"@string/app_name\"\n    android:roundIcon=\"@mipmap/ic_launcher_round\"\n    android:supportsRtl=\"true\"\n    android:theme=\"@style/AppTheme\">\n    <activity android:name=\".view.HomeActivity\">\n      <intent-filter>\n        <action android:name=\"android.intent.action.MAIN\"/>\n\n        <category android:name=\"android.intent.category.LAUNCHER\"/>\n      </intent-filter>\n    </activity>\n    <activity android:name=\".view.ComposeActivity\"/>\n\n    <activity android:name=\".ComposeActivity\">\n      <intent-filter>\n        <action android:name=\"android.intent.action.MAIN\"/>\n        <category android:name=\"android.intent.category.LAUNCHER\"/>\n      </intent-filter>\n    </activity>\n\n  </application>\n\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision a8ffa2618debb9da9ae830ab6310d5c225afd3a5)
++++ app/src/main/AndroidManifest.xml	(date 1635923262000)
+@@ -4,12 +4,12 @@
+     package="ro.upt.ac.chiuitter">
+ 
+   <application
+-    android:allowBackup="true"
+-    android:icon="@mipmap/ic_launcher"
+-    android:label="@string/app_name"
+-    android:roundIcon="@mipmap/ic_launcher_round"
+-    android:supportsRtl="true"
+-    android:theme="@style/AppTheme">
++      android:allowBackup="true"
++      android:icon="@mipmap/ic_launcher"
++      android:label="@string/app_name"
++      android:roundIcon="@mipmap/ic_launcher_round"
++      android:supportsRtl="true"
++      android:theme="@style/AppTheme">
+     <activity android:name=".view.HomeActivity">
+       <intent-filter>
+         <action android:name="android.intent.action.MAIN"/>
+@@ -19,13 +19,6 @@
+     </activity>
+     <activity android:name=".view.ComposeActivity"/>
+ 
+-    <activity android:name=".ComposeActivity">
+-      <intent-filter>
+-        <action android:name="android.intent.action.MAIN"/>
+-        <category android:name="android.intent.category.LAUNCHER"/>
+-      </intent-filter>
+-    </activity>
+-
+   </application>
+ 
+ </manifest>
+\ No newline at end of file

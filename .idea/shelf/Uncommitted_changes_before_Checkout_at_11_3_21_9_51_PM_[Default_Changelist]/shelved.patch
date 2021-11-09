@@ -1,0 +1,1115 @@
+Index: app/src/main/java/ro/upt/ac/chiuitter/HomeActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ro.upt.ac.chiuitter\n\nimport android.app.Activity\nimport android.content.Intent\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\nimport androidx.recyclerview.widget.LinearLayoutManager\nimport kotlinx.android.synthetic.main.item_chiuit.*\nimport kotlinx.android.synthetic.main.view_home.*\n\nclass HomeActivity : AppCompatActivity() {\n\n    private val dummyChiuitStore = DummyChiuitStore()\n\n    private lateinit var listAdapter: ChiuitRecyclerViewAdapter\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.view_home)\n\n        initList()\n    }\n\n    private fun initList() {\n        val chiuitList = dummyChiuitStore.getAllData()\n\n        //TODO(\"7. Instantiate the adapter, then setup the recycler view list\")\n\n        listAdapter = ChiuitRecyclerViewAdapter(chiuitList.toMutableList()) {\n            shareChiuit(it.description)\n        }\n\n        rv_chiuit_list.adapter = listAdapter\n        rv_chiuit_list.layoutManager = LinearLayoutManager(this)\n    }\n\n    /*\n    Defines text sharing/sending *implicit* intent, opens the application chooser menu,\n    and starts a new activity which supports sharing/sending text.\n     */\n    private fun shareChiuit(text: String) {\n        val sendIntent = Intent().apply {\n            // TODO 1: Configure to support text sending/sharing and then attach the text as intent's extra.\n\n            action = Intent.ACTION_SEND\n            putExtra(Intent.EXTRA_TEXT, text)\n            type = \"text/plain\";\n\n        }\n\n        val intentChooser = Intent.createChooser(sendIntent, \"\")\n\n        startActivity(intentChooser)\n    }\n\n    /*\n    Defines an *explicit* intent which will be used to start ComposeActivity.\n     */\n    private fun composeChiuit() {\n        // TODO 2: Create an explicit intent which points to ComposeActivity.\n\n        val intent = Intent(this, ComposeActivity::class.java).apply {\n\n        }\n\n\n        // TODO 3: Start a new activity with the previously defined intent.\n        // We start a new activity that we expect to return the acquired text as the result.\n\n        startActivityForResult(intent, COMPOSE_REQUEST_CODE);\n\n    }\n\n    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {\n        when (requestCode) {\n            COMPOSE_REQUEST_CODE -> if (resultCode == Activity.RESULT_OK) extractText(data)\n            else -> super.onActivityResult(requestCode, resultCode, data)\n        }\n    }\n\n    private fun extractText(data: Intent?) {\n        data?.let {\n            // TODO 5: Extract the text from result intent.\n\n            val text = data.getStringExtra(ComposeActivity.EXTRA_TEXT)\n\n            // TODO 6: Check if text is not null or empty, then set the new \"chiuit\" content.\n\n            if(text.isNullOrEmpty()) {\n                return;\n            } else {\n                txv_content.text = text;\n            }\n\n\n            //TODO(\"13. Instantiate a new chiuit object that add it to the adapter\")\n            val chiuitNou = Chiuit(text)\n            listAdapter.addItem(chiuitNou)\n        }\n    }\n\n    companion object {\n        const val COMPOSE_REQUEST_CODE = 1213\n    }\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/HomeActivity.kt	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ app/src/main/java/ro/upt/ac/chiuitter/HomeActivity.kt	(date 1635969087000)
+@@ -7,6 +7,7 @@
+ import androidx.recyclerview.widget.LinearLayoutManager
+ import kotlinx.android.synthetic.main.item_chiuit.*
+ import kotlinx.android.synthetic.main.view_home.*
++import ro.upt.ac.chiuitter.data.dummy.DummyChiuitStore
+ 
+ class HomeActivity : AppCompatActivity() {
+ 
+Index: build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\n\nbuildscript {\n    ext.kotlin_version = '1.3.50'\n    repositories {\n        google()\n        jcenter()\n    }\n    dependencies {\n        classpath 'com.android.tools.build:gradle:3.5.1'\n        classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version\"\n    }\n}\n\nallprojects {\n    repositories {\n        google()\n        jcenter()\n    }\n}\n\ntask clean(type: Delete) {\n    delete rootProject.buildDir\n}\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- build.gradle	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ build.gradle	(date 1635968896000)
+@@ -7,7 +7,7 @@
+         jcenter()
+     }
+     dependencies {
+-        classpath 'com.android.tools.build:gradle:3.5.1'
++        classpath 'com.android.tools.build:gradle:4.1.0'
+         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+     }
+ }
+Index: app/src/main/java/ro/upt/ac/chiuitter/ChiuitRecyclerViewAdapter.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ro.upt.ac.chiuitter\n\nimport android.view.LayoutInflater\nimport android.view.View\nimport android.view.ViewGroup\nimport androidx.recyclerview.widget.RecyclerView\nimport kotlinx.android.synthetic.main.item_chiuit.view.*\n\nclass ChiuitRecyclerViewAdapter(\n        private val chiuitList: MutableList<Chiuit>,\n        private val onClick: (Chiuit) -> (Unit))\n    : RecyclerView.Adapter<ChiuitRecyclerViewAdapter.ChiuitViewHolder>() {\n\n    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChiuitViewHolder {\n       // TODO(\"8. Inflate the item layout and return the view holder\")\n\n        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_chiuit, parent, false)\n        return ChiuitViewHolder(view)\n\n    }\n\n    override fun getItemCount(): Int {\n       // TODO(\"9. Return the size of samples\")\n\n        return chiuitList.size\n    }\n\n    override fun onBindViewHolder(holder: ChiuitViewHolder, position: Int) {\n        //TODO(\"10. Bind the view holder with chiuit data sample\")\n\n        holder.bind(chiuitList[position])\n    }\n\n    fun addItem(chiuit: Chiuit) {\n        //TODO(\"12. Add the new item to the list then SMARTLY notify an addition\")\n        chiuitList.add(chiuit)\n        notifyDataSetChanged()\n    }\n\n    inner class ChiuitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {\n\n        init {\n            itemView.ibt_share.setOnClickListener { onClick(chiuitList[adapterPosition]) }\n        }\n\n        fun bind(chiuit: Chiuit) {\n            //TODO(\"11. Set the text view with the content of chiuit's description\")\n\n            itemView.txv_content.setText(chiuit.description)\n        }\n\n    }\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/ChiuitRecyclerViewAdapter.kt	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ app/src/main/java/ro/upt/ac/chiuitter/ChiuitRecyclerViewAdapter.kt	(date 1635969087000)
+@@ -5,6 +5,7 @@
+ import android.view.ViewGroup
+ import androidx.recyclerview.widget.RecyclerView
+ import kotlinx.android.synthetic.main.item_chiuit.view.*
++import ro.upt.ac.chiuitter.domain.Chiuit
+ 
+ class ChiuitRecyclerViewAdapter(
+         private val chiuitList: MutableList<Chiuit>,
+Index: app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:tools=\"http://schemas.android.com/tools\"\n    package=\"ro.upt.ac.chiuitter\">\n\n  <application\n    android:allowBackup=\"true\"\n    android:icon=\"@mipmap/ic_launcher\"\n    android:label=\"@string/app_name\"\n    android:roundIcon=\"@mipmap/ic_launcher_round\"\n    android:supportsRtl=\"true\"\n    android:theme=\"@style/AppTheme\"\n      tools:ignore=\"GoogleAppIndexingWarning\">\n\n    <activity android:name=\".HomeActivity\">\n      <intent-filter>\n        <action android:name=\"android.intent.action.MAIN\"/>\n        <category android:name=\"android.intent.category.LAUNCHER\"/>\n      </intent-filter>\n    </activity>\n\n  </application>\n\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/AndroidManifest.xml	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ app/src/main/AndroidManifest.xml	(date 1635968914000)
+@@ -9,10 +9,17 @@
+     android:label="@string/app_name"
+     android:roundIcon="@mipmap/ic_launcher_round"
+     android:supportsRtl="true"
+-    android:theme="@style/AppTheme"
+-      tools:ignore="GoogleAppIndexingWarning">
++    android:theme="@style/AppTheme">
++    <activity android:name=".view.HomeActivity">
++      <intent-filter>
++        <action android:name="android.intent.action.MAIN"/>
+ 
+-    <activity android:name=".HomeActivity">
++        <category android:name="android.intent.category.LAUNCHER"/>
++      </intent-filter>
++    </activity>
++    <activity android:name=".view.ComposeActivity"/>
++
++    <activity android:name=".ComposeActivity">
+       <intent-filter>
+         <action android:name="android.intent.action.MAIN"/>
+         <category android:name="android.intent.category.LAUNCHER"/>
+Index: .idea/codeStyles/codeStyleConfig.xml
+===================================================================
+--- .idea/codeStyles/codeStyleConfig.xml	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ .idea/codeStyles/codeStyleConfig.xml	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
+@@ -1,5 +0,0 @@
+-<component name="ProjectCodeStyleConfiguration">
+-  <state>
+-    <option name="PREFERRED_PROJECT_CODE_STYLE" value="GoogleStyle copy" />
+-  </state>
+-</component>
+\ No newline at end of file
+Index: .idea/shelf/Uncommitted_changes_before_Checkout_at_10_26_21_10_32_PM_[Default_Changelist]/shelved.patch
+===================================================================
+--- .idea/shelf/Uncommitted_changes_before_Checkout_at_10_26_21_10_32_PM_[Default_Changelist]/shelved.patch	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ .idea/shelf/Uncommitted_changes_before_Checkout_at_10_26_21_10_32_PM_[Default_Changelist]/shelved.patch	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
+@@ -1,50 +0,0 @@
+-Index: app/src/main/java/ro/upt/ac/chiuitter/HomeActivity.kt
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>package ro.upt.ac.chiuitter\n\nimport android.app.Activity\nimport android.content.Intent\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\n\nclass HomeActivity : AppCompatActivity() {\n\n    private val dummyChiuitStore = DummyChiuitStore()\n\n    private lateinit var listAdapter: ChiuitRecyclerViewAdapter\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.view_home)\n\n        initList()\n    }\n\n    private fun initList() {\n        val chiuitList = dummyChiuitStore.getAllData()\n\n        TODO(\"7. Instantiate the adapter, then setup the recycler view list\")\n    }\n\n    /*\n    Defines text sharing/sending *implicit* intent, opens the application chooser menu,\n    and starts a new activity which supports sharing/sending text.\n     */\n    private fun shareChiuit(text: String) {\n        val sendIntent = Intent().apply {\n            // TODO 1: Configure to support text sending/sharing and then attach the text as intent's extra.\n\n            action = Intent.ACTION_SEND\n            putExtra(Intent.EXTRA_TEXT, text)\n            type = \"text/plain\";\n\n        }\n\n        val intentChooser = Intent.createChooser(sendIntent, \"\")\n\n        startActivity(intentChooser)\n    }\n\n    /*\n    Defines an *explicit* intent which will be used to start ComposeActivity.\n     */\n    private fun composeChiuit() {\n        // TODO 2: Create an explicit intent which points to ComposeActivity.\n\n        val cmpactivityIntent = Intent(this, ComposeActivity::class.java).apply {\n\n        }\n\n\n        // TODO 3: Start a new activity with the previously defined intent.\n        // We start a new activity that we expect to return the acquired text as the result.\n\n        startActivityForResult(intent, COMPOSE_REQUEST_CODE);\n\n    }\n\n    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {\n        when (requestCode) {\n            COMPOSE_REQUEST_CODE -> if (resultCode == Activity.RESULT_OK) extractText(data)\n            else -> super.onActivityResult(requestCode, resultCode, data)\n        }\n    }\n\n    private fun extractText(data: Intent?) {\n        data?.let {\n            // TODO 5: Extract the text from result intent.\n\n            val text = data.getStringExtra(ComposeActivity.EXTRA_TEXT)\n\n            // TODO 6: Check if text is not null or empty, then set the new \"chiuit\" content.\n\n            if(text.isNullOrEmpty()) {\n                return;\n            } else {\n                txv_content.text = text;\n            }\n\n\n            TODO(\"13. Instantiate a new chiuit object that add it to the adapter\")\n        }\n    }\n\n    companion object {\n        const val COMPOSE_REQUEST_CODE = 1213\n    }\n\n}\n
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+---- app/src/main/java/ro/upt/ac/chiuitter/HomeActivity.kt	(revision d531e072a67a4ce0894a387e536c58000243492e)
+-+++ app/src/main/java/ro/upt/ac/chiuitter/HomeActivity.kt	(date 1635276692000)
+-@@ -49,7 +49,7 @@
+-     private fun composeChiuit() {
+-         // TODO 2: Create an explicit intent which points to ComposeActivity.
+- 
+--        val cmpactivityIntent = Intent(this, ComposeActivity::class.java).apply {
+-+        val intent = Intent(this, ComposeActivity::class.java).apply {
+- 
+-         }
+- 
+-Index: app/build.gradle
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>apply plugin: 'com.android.application'\n\napply plugin: 'kotlin-android'\n\napply plugin: 'kotlin-android-extensions'\n\nandroid {\n\n    compileSdkVersion 30\n\n    defaultConfig {\n        applicationId \"ro.upt.ac.chiuitter\"\n        minSdkVersion 22\n        targetSdkVersion 30\n        versionCode 1\n        versionName \"1.0\"\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\n    }\n\n    buildTypes {\n        release {\n            minifyEnabled false\n            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'\n        }\n    }\n}\n\ndependencies {\n    implementation fileTree(dir: 'libs', include: ['*.jar'])\n    implementation\"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version\"\n\n    implementation 'androidx.appcompat:appcompat:1.1.0'\n    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'\n\n    implementation 'com.google.android.material:material:1.0.0'\n}\n
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+---- app/build.gradle	(revision d531e072a67a4ce0894a387e536c58000243492e)
+-+++ app/build.gradle	(date 1635276692000)
+-@@ -30,7 +30,7 @@
+-     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+- 
+-     implementation 'androidx.appcompat:appcompat:1.1.0'
+--    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
+-+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+- 
+-     implementation 'com.google.android.material:material:1.0.0'
+- }
+-Index: build.gradle
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\n\nbuildscript {\n    ext.kotlin_version = '1.3.50'\n    repositories {\n        google()\n        jcenter()\n    }\n    dependencies {\n        classpath 'com.android.tools.build:gradle:4.1.0'\n        classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version\"\n    }\n}\n\nallprojects {\n    repositories {\n        google()\n        jcenter()\n    }\n}\n\ntask clean(type: Delete) {\n    delete rootProject.buildDir\n}\n
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+---- build.gradle	(revision d531e072a67a4ce0894a387e536c58000243492e)
+-+++ build.gradle	(date 1635276692000)
+-@@ -22,3 +22,4 @@
+- task clean(type: Delete) {
+-     delete rootProject.buildDir
+- }
+-+
+Index: .idea/shelf/Uncommitted_changes_before_Merge_at_10_26_21_10_31_PM_[Default_Changelist]/shelved.patch
+===================================================================
+--- .idea/shelf/Uncommitted_changes_before_Merge_at_10_26_21_10_31_PM_[Default_Changelist]/shelved.patch	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ .idea/shelf/Uncommitted_changes_before_Merge_at_10_26_21_10_31_PM_[Default_Changelist]/shelved.patch	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
+@@ -1,50 +0,0 @@
+-Index: app/src/main/java/ro/upt/ac/chiuitter/HomeActivity.kt
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>package ro.upt.ac.chiuitter\n\nimport android.app.Activity\nimport android.content.Intent\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\nimport kotlinx.android.synthetic.main.view_home.*\n\nclass HomeActivity : AppCompatActivity() {\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.view_home)\n\n        ibt_share.setOnClickListener { shareChiuit(txv_content.text.toString()) }\n        fab_add.setOnClickListener { composeChiuit() }\n    }\n\n    /*\n    Defines text sharing/sending *implicit* intent, opens the application chooser menu,\n    and starts a new activity which supports sharing/sending text.\n     */\n    private fun shareChiuit(text: String) {\n        val sendIntent = Intent().apply {\n            // TODO 1: Configure to support text sending/sharing and then attach the text as intent's extra.\n\n            action = Intent.ACTION_SEND\n            putExtra(Intent.EXTRA_TEXT, text)\n            type = \"text/plain\";\n\n\n        }\n\n        val intentChooser = Intent.createChooser(sendIntent, \"\")\n\n        startActivity(intentChooser)\n    }\n\n    /*\n    Defines an *explicit* intent which will be used to start ComposeActivity.\n     */\n    private fun composeChiuit() {\n        // TODO 2: Create an explicit intent which points to ComposeActivity.\n\n        val cmpactivityIntent = Intent(this, ComposeActivity::class.java).apply {\n\n        }\n\n\n        // TODO 3: Start a new activity with the previously defined intent.\n        // We start a new activity that we expect to return the acquired text as the result.\n\n        startActivityForResult(intent, COMPOSE_REQUEST_CODE);\n\n    }\n\n    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {\n        when (requestCode) {\n            COMPOSE_REQUEST_CODE -> if (resultCode == Activity.RESULT_OK) extractText(data)\n            else -> super.onActivityResult(requestCode, resultCode, data)\n        }\n    }\n\n    private fun extractText(data: Intent?) {\n        data?.let {\n            // TODO 5: Extract the text from result intent.\n\n            val text = data.getStringExtra(ComposeActivity.EXTRA_TEXT)\n\n            // TODO 6: Check if text is not null or empty, then set the new \"chiuit\" content.\n\n            if(text.isNullOrEmpty()) {\n                return;\n            } else {\n                txv_content.text = text;\n            }\n\n\n        }\n    }\n\n    companion object {\n        const val COMPOSE_REQUEST_CODE = 1213\n    }\n\n}\n
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+---- app/src/main/java/ro/upt/ac/chiuitter/HomeActivity.kt	(revision ee7e38523d433330d056b3f90ddd017a350f6200)
+-+++ app/src/main/java/ro/upt/ac/chiuitter/HomeActivity.kt	(date 1634245791000)
+-@@ -42,7 +42,7 @@
+-     private fun composeChiuit() {
+-         // TODO 2: Create an explicit intent which points to ComposeActivity.
+- 
+--        val cmpactivityIntent = Intent(this, ComposeActivity::class.java).apply {
+-+        val intent = Intent(this, ComposeActivity::class.java).apply {
+- 
+-         }
+- 
+-Index: app/build.gradle
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>apply plugin: 'com.android.application'\n\napply plugin: 'kotlin-android'\n\napply plugin: 'kotlin-android-extensions'\n\nandroid {\n\n    compileSdkVersion 30\n\n    defaultConfig {\n        applicationId \"ro.upt.ac.chiuitter\"\n        minSdkVersion 22\n        targetSdkVersion 30\n        versionCode 1\n        versionName \"1.0\"\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\n    }\n\n    buildTypes {\n        release {\n            minifyEnabled false\n            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'\n        }\n    }\n}\n\ndependencies {\n    implementation fileTree(dir: 'libs', include: ['*.jar'])\n    implementation\"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version\"\n\n    implementation 'androidx.appcompat:appcompat:1.1.0'\n    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'\n\n    implementation 'com.google.android.material:material:1.0.0'\n}\n
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+---- app/build.gradle	(revision ee7e38523d433330d056b3f90ddd017a350f6200)
+-+++ app/build.gradle	(date 1634244297000)
+-@@ -30,7 +30,7 @@
+-     implementation"org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+- 
+-     implementation 'androidx.appcompat:appcompat:1.1.0'
+--    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta2'
+-+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+- 
+-     implementation 'com.google.android.material:material:1.0.0'
+- }
+-Index: build.gradle
+-IDEA additional info:
+-Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+-<+>// Top-level build file where you can add configuration options common to all sub-projects/modules.\n\nbuildscript {\n    ext.kotlin_version = '1.3.50'\n    repositories {\n        google()\n        jcenter()\n    }\n    dependencies {\n        classpath 'com.android.tools.build:gradle:4.1.0'\n        classpath \"org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version\"\n    }\n}\n\nallprojects {\n    repositories {\n        google()\n        jcenter()\n    }\n}\n\ntask clean(type: Delete) {\n    delete rootProject.buildDir\n}\n
+-Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+-<+>UTF-8
+-===================================================================
+---- build.gradle	(revision ee7e38523d433330d056b3f90ddd017a350f6200)
+-+++ build.gradle	(date 1634244034000)
+-@@ -22,3 +22,4 @@
+- task clean(type: Delete) {
+-     delete rootProject.buildDir
+- }
+-+
+Index: app/src/main/java/ro/upt/ac/chiuitter/Chiuit.kt
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/Chiuit.kt	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ app/src/main/java/ro/upt/ac/chiuitter/Chiuit.kt	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
+@@ -1,3 +0,0 @@
+-package ro.upt.ac.chiuitter
+-
+-data class Chiuit(val description : String)
+\ No newline at end of file
+Index: .idea/encodings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/encodings.xml	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ .idea/encodings.xml	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="Encoding">
+-    <file url="PROJECT" charset="UTF-8" />
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/runConfigurations.xml
+===================================================================
+--- .idea/runConfigurations.xml	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ .idea/runConfigurations.xml	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
+@@ -1,12 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="RunConfigurationProducerService">
+-    <option name="ignoredProducers">
+-      <set>
+-        <option value="org.jetbrains.plugins.gradle.execution.test.runner.AllInPackageGradleConfigurationProducer" />
+-        <option value="org.jetbrains.plugins.gradle.execution.test.runner.TestClassGradleConfigurationProducer" />
+-        <option value="org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfigurationProducer" />
+-      </set>
+-    </option>
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/vcs.xml
+===================================================================
+--- .idea/vcs.xml	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ .idea/vcs.xml	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="UTF-8"?>
+-<project version="4">
+-  <component name="VcsDirectoryMappings">
+-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+-  </component>
+-</project>
+\ No newline at end of file
+Index: .idea/codeStyles/Project.xml
+===================================================================
+--- .idea/codeStyles/Project.xml	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ .idea/codeStyles/Project.xml	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
+@@ -1,214 +0,0 @@
+-<component name="ProjectCodeStyleConfiguration">
+-  <code_scheme name="Project" version="173">
+-    <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="99" />
+-    <option name="NAMES_COUNT_TO_USE_IMPORT_ON_DEMAND" value="99" />
+-    <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
+-      <value />
+-    </option>
+-    <option name="IMPORT_LAYOUT_TABLE">
+-      <value>
+-        <package name="android" withSubpackages="true" static="false" />
+-        <emptyLine />
+-        <package name="com" withSubpackages="true" static="false" />
+-        <emptyLine />
+-        <package name="junit" withSubpackages="true" static="false" />
+-        <emptyLine />
+-        <package name="net" withSubpackages="true" static="false" />
+-        <emptyLine />
+-        <package name="org" withSubpackages="true" static="false" />
+-        <emptyLine />
+-        <package name="java" withSubpackages="true" static="false" />
+-        <emptyLine />
+-        <package name="javax" withSubpackages="true" static="false" />
+-        <emptyLine />
+-        <package name="" withSubpackages="true" static="false" />
+-        <emptyLine />
+-        <package name="" withSubpackages="true" static="true" />
+-        <emptyLine />
+-      </value>
+-    </option>
+-    <JavaCodeStyleSettings>
+-      <option name="IMPORT_LAYOUT_TABLE">
+-        <value>
+-          <package name="android" withSubpackages="true" static="false" />
+-          <emptyLine />
+-          <package name="com" withSubpackages="true" static="false" />
+-          <emptyLine />
+-          <package name="junit" withSubpackages="true" static="false" />
+-          <emptyLine />
+-          <package name="net" withSubpackages="true" static="false" />
+-          <emptyLine />
+-          <package name="org" withSubpackages="true" static="false" />
+-          <emptyLine />
+-          <package name="java" withSubpackages="true" static="false" />
+-          <emptyLine />
+-          <package name="javax" withSubpackages="true" static="false" />
+-          <emptyLine />
+-          <package name="" withSubpackages="true" static="false" />
+-          <emptyLine />
+-          <package name="" withSubpackages="true" static="true" />
+-          <emptyLine />
+-        </value>
+-      </option>
+-    </JavaCodeStyleSettings>
+-    <XML>
+-      <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
+-    </XML>
+-    <codeStyleSettings language="XML">
+-      <indentOptions>
+-        <option name="CONTINUATION_INDENT_SIZE" value="4" />
+-      </indentOptions>
+-      <arrangement>
+-        <rules>
+-          <section>
+-            <rule>
+-              <match>
+-                <AND>
+-                  <NAME>xmlns:android</NAME>
+-                  <XML_NAMESPACE>^$</XML_NAMESPACE>
+-                </AND>
+-              </match>
+-            </rule>
+-          </section>
+-          <section>
+-            <rule>
+-              <match>
+-                <AND>
+-                  <NAME>xmlns:.*</NAME>
+-                  <XML_NAMESPACE>^$</XML_NAMESPACE>
+-                </AND>
+-              </match>
+-              <order>BY_NAME</order>
+-            </rule>
+-          </section>
+-          <section>
+-            <rule>
+-              <match>
+-                <AND>
+-                  <NAME>.*:id</NAME>
+-                  <XML_NAMESPACE>http://schemas.android.com/apk/res/android</XML_NAMESPACE>
+-                </AND>
+-              </match>
+-            </rule>
+-          </section>
+-          <section>
+-            <rule>
+-              <match>
+-                <AND>
+-                  <NAME>.*:name</NAME>
+-                  <XML_NAMESPACE>http://schemas.android.com/apk/res/android</XML_NAMESPACE>
+-                </AND>
+-              </match>
+-            </rule>
+-          </section>
+-          <section>
+-            <rule>
+-              <match>
+-                <AND>
+-                  <NAME>name</NAME>
+-                  <XML_NAMESPACE>^$</XML_NAMESPACE>
+-                </AND>
+-              </match>
+-            </rule>
+-          </section>
+-          <section>
+-            <rule>
+-              <match>
+-                <AND>
+-                  <NAME>style</NAME>
+-                  <XML_NAMESPACE>^$</XML_NAMESPACE>
+-                </AND>
+-              </match>
+-            </rule>
+-          </section>
+-          <section>
+-            <rule>
+-              <match>
+-                <AND>
+-                  <NAME>.*</NAME>
+-                  <XML_NAMESPACE>^$</XML_NAMESPACE>
+-                </AND>
+-              </match>
+-              <order>BY_NAME</order>
+-            </rule>
+-          </section>
+-          <section>
+-            <rule>
+-              <match>
+-                <AND>
+-                  <NAME>.*:layout_width</NAME>
+-                  <XML_NAMESPACE>http://schemas.android.com/apk/res/android</XML_NAMESPACE>
+-                </AND>
+-              </match>
+-            </rule>
+-          </section>
+-          <section>
+-            <rule>
+-              <match>
+-                <AND>
+-                  <NAME>.*:layout_height</NAME>
+-                  <XML_NAMESPACE>http://schemas.android.com/apk/res/android</XML_NAMESPACE>
+-                </AND>
+-              </match>
+-            </rule>
+-          </section>
+-          <section>
+-            <rule>
+-              <match>
+-                <AND>
+-                  <NAME>.*:layout_.*</NAME>
+-                  <XML_NAMESPACE>http://schemas.android.com/apk/res/android</XML_NAMESPACE>
+-                </AND>
+-              </match>
+-              <order>BY_NAME</order>
+-            </rule>
+-          </section>
+-          <section>
+-            <rule>
+-              <match>
+-                <AND>
+-                  <NAME>.*:width</NAME>
+-                  <XML_NAMESPACE>http://schemas.android.com/apk/res/android</XML_NAMESPACE>
+-                </AND>
+-              </match>
+-              <order>BY_NAME</order>
+-            </rule>
+-          </section>
+-          <section>
+-            <rule>
+-              <match>
+-                <AND>
+-                  <NAME>.*:height</NAME>
+-                  <XML_NAMESPACE>http://schemas.android.com/apk/res/android</XML_NAMESPACE>
+-                </AND>
+-              </match>
+-              <order>BY_NAME</order>
+-            </rule>
+-          </section>
+-          <section>
+-            <rule>
+-              <match>
+-                <AND>
+-                  <NAME>.*</NAME>
+-                  <XML_NAMESPACE>http://schemas.android.com/apk/res/android</XML_NAMESPACE>
+-                </AND>
+-              </match>
+-              <order>BY_NAME</order>
+-            </rule>
+-          </section>
+-          <section>
+-            <rule>
+-              <match>
+-                <AND>
+-                  <NAME>.*</NAME>
+-                  <XML_NAMESPACE>.*</XML_NAMESPACE>
+-                </AND>
+-              </match>
+-              <order>BY_NAME</order>
+-            </rule>
+-          </section>
+-        </rules>
+-      </arrangement>
+-    </codeStyleSettings>
+-  </code_scheme>
+-</component>
+\ No newline at end of file
+Index: app/src/main/java/ro/upt/ac/chiuitter/ComposeActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ro.upt.ac.chiuitter\n\nimport android.app.Activity\nimport android.content.Intent\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\nimport kotlinx.android.synthetic.main.view_compose.*\n\n\n// TODO 4: All application components must be added to manifest. Make sure to add this one.\nclass ComposeActivity : AppCompatActivity() {\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.view_compose)\n\n        fab_finish.setOnClickListener {\n            // Prepare the intent to be returned as result.\n            val returnIntent = Intent().apply {\n                val content = etx_content.editableText.toString()\n                putExtra(EXTRA_TEXT, content)\n            }\n\n            // Mark the result as success and attach text data.\n            setResult(Activity.RESULT_OK, returnIntent)\n\n            // Finish the activity, we do not need it anymore after we got the text input.\n            finish()\n        }\n    }\n\n    companion object {\n        const val EXTRA_TEXT = \"extra_text\"\n    }\n\n}\n
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/ComposeActivity.kt	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ app/src/main/java/ro/upt/ac/chiuitter/view/ComposeActivity.kt	(date 1635968896000)
+@@ -1,13 +1,13 @@
+-package ro.upt.ac.chiuitter
++package ro.upt.ac.chiuitter.view
+ 
+ import android.app.Activity
+ import android.content.Intent
+ import android.os.Bundle
+ import androidx.appcompat.app.AppCompatActivity
+ import kotlinx.android.synthetic.main.view_compose.*
++import ro.upt.ac.chiuitter.R
+ 
+ 
+-// TODO 4: All application components must be added to manifest. Make sure to add this one.
+ class ComposeActivity : AppCompatActivity() {
+ 
+     override fun onCreate(savedInstanceState: Bundle?) {
+Index: app/src/main/java/ro/upt/ac/chiuitter/view/ChiuitRecyclerViewAdapter.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/view/ChiuitRecyclerViewAdapter.kt	(date 1635968895000)
++++ app/src/main/java/ro/upt/ac/chiuitter/view/ChiuitRecyclerViewAdapter.kt	(date 1635968895000)
+@@ -0,0 +1,48 @@
++package ro.upt.ac.chiuitter.view
++
++import android.view.LayoutInflater
++import android.view.View
++import android.view.ViewGroup
++import androidx.recyclerview.widget.RecyclerView
++import kotlinx.android.synthetic.main.item_chiuit.view.*
++import ro.upt.ac.chiuitter.R
++import ro.upt.ac.chiuitter.domain.Chiuit
++
++
++class ChiuitRecyclerViewAdapter(
++        private val chiuitList: List<Chiuit>,
++        private val onShareClick: (Chiuit) -> (Unit),
++        private val onDeleteClick: (Chiuit) -> (Unit)
++
++// TODO("Add a new callback triggered when delete button was pressed")
++
++) : RecyclerView.Adapter<ChiuitRecyclerViewAdapter.ChiuitViewHolder>() {
++
++    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChiuitViewHolder {
++        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_chiuit, parent, false)
++        return ChiuitViewHolder(view)
++    }
++
++    override fun getItemCount(): Int {
++        return chiuitList.size
++    }
++
++    override fun onBindViewHolder(holder: ChiuitViewHolder, position: Int) {
++        holder.bind(chiuitList[position])
++    }
++
++    inner class ChiuitViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
++
++        init {
++            itemView.ibt_share.setOnClickListener { onShareClick(chiuitList[adapterPosition]) }
++            TODO("Trigger delete callback same as for share")
++            itemView.ibt_delete.setOnClickListener { onDeleteClick(chiuitList[adapterPosition]) }
++        }
++
++        fun bind(chiuit: Chiuit) {
++            itemView.txv_content.text = chiuit.description
++        }
++
++    }
++
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/view_home.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<FrameLayout\n  xmlns:android=\"http://schemas.android.com/apk/res/android\"\n  xmlns:tools=\"http://schemas.android.com/tools\"\n  android:layout_width=\"match_parent\"\n  android:layout_height=\"match_parent\"\n  tools:context=\".HomeActivity\">\n\n  <androidx.recyclerview.widget.RecyclerView\n    android:id=\"@+id/rv_chiuit_list\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\"/>\n\n  <com.google.android.material.floatingactionbutton.FloatingActionButton\n    android:id=\"@+id/fab_add\"\n    android:layout_width=\"wrap_content\"\n    android:layout_height=\"wrap_content\"\n    android:layout_margin=\"16dp\"\n    android:layout_gravity=\"bottom|end\"\n    android:src=\"@drawable/ic_mode_edit\"\n    android:tint=\"@android:color/white\"/>\n\n</FrameLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/view_home.xml	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ app/src/main/res/layout/view_home.xml	(date 1635968896000)
+@@ -4,7 +4,7 @@
+   xmlns:tools="http://schemas.android.com/tools"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent"
+-  tools:context=".HomeActivity">
++  tools:context=".view.HomeActivity">
+ 
+   <androidx.recyclerview.widget.RecyclerView
+     android:id="@+id/rv_chiuit_list"
+Index: app/src/main/java/ro/upt/ac/chiuitter/view/HomeActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/view/HomeActivity.kt	(date 1635968896000)
++++ app/src/main/java/ro/upt/ac/chiuitter/view/HomeActivity.kt	(date 1635968896000)
+@@ -0,0 +1,103 @@
++package ro.upt.ac.chiuitter.view
++
++import android.app.Activity
++import android.content.Intent
++import android.os.Bundle
++import androidx.appcompat.app.AppCompatActivity
++import androidx.lifecycle.Observer
++import androidx.lifecycle.ViewModelProviders
++import androidx.recyclerview.widget.LinearLayoutManager
++import kotlinx.android.synthetic.main.view_home.*
++import ro.upt.ac.chiuitter.R
++import ro.upt.ac.chiuitter.data.database.ChiuitDbStore
++import ro.upt.ac.chiuitter.data.database.RoomDatabase
++import ro.upt.ac.chiuitter.domain.Chiuit
++import ro.upt.ac.chiuitter.viewmodel.HomeViewModel
++import ro.upt.ac.chiuitter.viewmodel.HomeViewModelFactory
++
++
++class HomeActivity : AppCompatActivity() {
++
++    private lateinit var viewModel: HomeViewModel
++
++    override fun onCreate(savedInstanceState: Bundle?) {
++        super.onCreate(savedInstanceState)
++        setContentView(R.layout.view_home)
++
++        fab_add.setOnClickListener { composeChiuit() }
++
++        val factory = HomeViewModelFactory(ChiuitDbStore(RoomDatabase.getDb(this)))
++        viewModel = ViewModelProviders.of(this, factory).get(HomeViewModel::class.java)
++
++        initList()
++    }
++
++    private fun initList() {
++        rv_chiuit_list.apply {
++            layoutManager = LinearLayoutManager(this@HomeActivity)
++        }
++
++        viewModel.chiuitsLiveData.observe(this, Observer { chiuits ->
++            //TODO("Instantiate an adapter with the received list and assign it to recycler view")
++            val listAdapter = ChiuitRecyclerViewAdapter(chiuits,
++                    fun(chiuit: Chiuit): Unit = shareChiuit(chiuit.description), fun(chiuit): Unit = deleteChiuit(chiuit))
++
++            rv_chiuit_list.apply {
++                setHasFixedSize(true)
++                adapter = listAdapter
++            }
++        })
++
++        viewModel.retrieveChiuits()
++    }
++
++    /*
++    Defines text sharing/sending *implicit* intent, opens the application chooser menu
++    and then starts a new activity which supports sharing/sending text.
++     */
++    private fun shareChiuit(text: String) {
++        val sendIntent = Intent().apply {
++            TODO("Customize an implicit intent which triggers text sharing")
++            action = Intent.ACTION_SEND
++            type = "text/plain"
++            putExtra(Intent.EXTRA_TEXT, text.toString())
++        }
++
++        val intentChooser = Intent.createChooser(sendIntent, "")
++
++        startActivity(intentChooser)
++    }
++
++    /*
++    Defines an *explicit* intent which will be used to start ComposeActivity.
++     */
++    private fun composeChiuit() {
++        val intent = Intent(this, ComposeActivity::class.java)
++        startActivityForResult(intent, COMPOSE_REQUEST_CODE)
++    }
++
++    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
++        when (requestCode) {
++            COMPOSE_REQUEST_CODE -> if (resultCode == Activity.RESULT_OK) extractText(data)
++            else -> super.onActivityResult(requestCode, resultCode, data)
++        }
++    }
++
++    private fun extractText(data: Intent?) {
++        data?.let {
++            val text = data.getStringExtra(ComposeActivity.EXTRA_TEXT)
++            if (!text.isNullOrBlank()) {
++                viewModel.addChiuit(text)
++            }
++        }
++    }
++
++    private fun deleteChiuit(chiuit: Chiuit){
++        viewModel.removeChiuit(chiuit)
++    }
++
++    companion object {
++        const val COMPOSE_REQUEST_CODE = 1213
++    }
++
++}
+Index: app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitDbStore.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitDbStore.kt	(date 1635968895000)
++++ app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitDbStore.kt	(date 1635968895000)
+@@ -0,0 +1,27 @@
++package ro.upt.ac.chiuitter.data.database
++
++import ro.upt.ac.chiuitter.domain.ChiuitRepository
++import ro.upt.ac.chiuitter.domain.Chiuit
++
++class ChiuitDbStore(private val appDatabase: AppDatabase) : ChiuitRepository {
++
++    override fun getAll(): List<Chiuit> {
++        return appDatabase.chiuitDao().getAll().map { it.toDomainModel() }
++    }
++
++    override fun addChiuit(chiuit: Chiuit) {
++        //TODO ("Insert the new entry")
++        appDatabase.chiuitDao().addChiuit(chiuit.toDbModel())
++    }
++
++    override fun removeChiuit(chiuit: Chiuit) {
++        //TODO ("Insert the specified entry")
++        appDatabase.chiuitDao().removeChiuit(chiuit.toDbModel())
++    }
++
++
++    private fun Chiuit.toDbModel() = ChiuitEntity(timestamp, description)
++
++    private fun ChiuitEntity.toDomainModel() = Chiuit(timestamp, description)
++
++}
+\ No newline at end of file
+Index: app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitDao.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitDao.kt	(date 1635968895000)
++++ app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitDao.kt	(date 1635968895000)
+@@ -0,0 +1,25 @@
++package ro.upt.ac.chiuitter.data.database
++
++import androidx.room.Dao
++import androidx.room.Delete
++import androidx.room.Insert
++import androidx.room.Query
++
++
++@Dao
++interface ChiuitDao {
++
++    @Query("SELECT * FROM chiuits")
++    fun getAll(): List<ChiuitEntity>
++
++
++    // TODO("Define insert")
++    @Insert
++    fun addChiuit(chiuit: ChiuitEntity)
++
++    // TODO("Define delete")
++    @Delete
++    fun removeChiuit(chiuit: ChiuitEntity)
++
++
++}
+\ No newline at end of file
+Index: app/src/main/java/ro/upt/ac/chiuitter/DummyChiuitStore.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package ro.upt.ac.chiuitter\n\nclass DummyChiuitStore {\n\n    fun getAllData(): List<Chiuit> =\n            listOf(\n                    Chiuit(\"Ada-mi Doamne, timpu-odata\\n\" +\n                            \"Sa-mi vad tara mea bogata,\\n\" +\n                            \"Cei campi si munti inverziti\\n\" +\n                            \"Dulci surori si frati iubiti.\"),\n                    Chiuit(\"Vai de mine multe știu\\n\" +\n                            \"și mă mir unde le țiu;\\n\" +\n                            \"da’ le țiu într-o poiată\\n\" +\n                            \"și le slobod câteodată,\\n\" +\n                            \"când îi mândra supărată\"),\n                    Chiuit(\"Cui nu i-s dragi horile,\\n\" +\n                            \"bată-l sărbătorile,\\n\" +\n                            \"că pe mine nu m-or bate\\n\" +\n                            \"că horesc și zi și noapte\\n\" +\n                            \"și-oi hori până la moarte,\\n\" +\n                            \"să-mi horesc horile toate\"),\n                    Chiuit(\"Cine nu umblă la joc\\n\" +\n                            \"crește ca un dobitoc,\\n\" +\n                            \"nu știe râde, nici glumi,\\n\" +\n                            \"parcă-i muma pădurii\"),\n                    Chiuit(\"Decât c-o ceteră rea,\\n\" +\n                            \"mai bine cu gura mea.\\n\" +\n                            \"\\n\" +\n                            \"Cetera-i cu patru strune\\n\" +\n                            \"și mai rele și mai bune…\\n\" +\n                            \"\\n\" +\n                            \"Gura mea toate le spune;\\n\" +\n                            \"cetera mai și greșește…\\n\" +\n                            \"gura mea le potrivește!\"),\n                    Chiuit(\"Frunză verde lemn uscat\\n\" +\n                            \"de strigat m-am săturat\"))\n\n}
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/DummyChiuitStore.kt	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ app/src/main/java/ro/upt/ac/chiuitter/data/dummy/DummyChiuitStore.kt	(date 1635968896000)
+@@ -1,29 +1,32 @@
+-package ro.upt.ac.chiuitter
++package ro.upt.ac.chiuitter.data.dummy
+ 
+-class DummyChiuitStore {
++import ro.upt.ac.chiuitter.domain.ChiuitRepository
++import ro.upt.ac.chiuitter.domain.Chiuit
+ 
+-    fun getAllData(): List<Chiuit> =
++class DummyChiuitStore : ChiuitRepository {
++
++    override fun getAll(): List<Chiuit> =
+             listOf(
+-                    Chiuit("Ada-mi Doamne, timpu-odata\n" +
++                    Chiuit(0,"Ada-mi Doamne, timpu-odata\n" +
+                             "Sa-mi vad tara mea bogata,\n" +
+                             "Cei campi si munti inverziti\n" +
+                             "Dulci surori si frati iubiti."),
+-                    Chiuit("Vai de mine multe știu\n" +
++                    Chiuit(1,"Vai de mine multe știu\n" +
+                             "și mă mir unde le țiu;\n" +
+                             "da’ le țiu într-o poiată\n" +
+                             "și le slobod câteodată,\n" +
+                             "când îi mândra supărată"),
+-                    Chiuit("Cui nu i-s dragi horile,\n" +
++                    Chiuit(2,"Cui nu i-s dragi horile,\n" +
+                             "bată-l sărbătorile,\n" +
+                             "că pe mine nu m-or bate\n" +
+                             "că horesc și zi și noapte\n" +
+                             "și-oi hori până la moarte,\n" +
+                             "să-mi horesc horile toate"),
+-                    Chiuit("Cine nu umblă la joc\n" +
++                    Chiuit(3, "Cine nu umblă la joc\n" +
+                             "crește ca un dobitoc,\n" +
+                             "nu știe râde, nici glumi,\n" +
+                             "parcă-i muma pădurii"),
+-                    Chiuit("Decât c-o ceteră rea,\n" +
++                    Chiuit(4, "Decât c-o ceteră rea,\n" +
+                             "mai bine cu gura mea.\n" +
+                             "\n" +
+                             "Cetera-i cu patru strune\n" +
+@@ -32,7 +35,12 @@
+                             "Gura mea toate le spune;\n" +
+                             "cetera mai și greșește…\n" +
+                             "gura mea le potrivește!"),
+-                    Chiuit("Frunză verde lemn uscat\n" +
++                    Chiuit(5,"Frunză verde lemn uscat\n" +
+                             "de strigat m-am săturat"))
+ 
++    override fun addChiuit(chiuit: Chiuit) {
++    }
++
++    override fun removeChiuit(chiuit: Chiuit) {
++    }
+ }
+\ No newline at end of file
+Index: app/src/main/java/ro/upt/ac/chiuitter/viewmodel/HomeViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/viewmodel/HomeViewModel.kt	(date 1635968896000)
++++ app/src/main/java/ro/upt/ac/chiuitter/viewmodel/HomeViewModel.kt	(date 1635968896000)
+@@ -0,0 +1,27 @@
++package ro.upt.ac.chiuitter.viewmodel
++
++import androidx.lifecycle.MutableLiveData
++import androidx.lifecycle.ViewModel
++import ro.upt.ac.chiuitter.domain.ChiuitRepository
++import ro.upt.ac.chiuitter.domain.Chiuit
++
++class HomeViewModel(private val chiuitRepository: ChiuitRepository) : ViewModel() {
++
++    val chiuitsLiveData = MutableLiveData<List<Chiuit>>()
++
++    fun retrieveChiuits() {
++        val chiuits = chiuitRepository.getAll()
++        chiuitsLiveData.postValue(chiuits)
++    }
++
++    fun addChiuit(description: String) {
++        chiuitRepository.addChiuit(Chiuit(System.currentTimeMillis(), description))
++        retrieveChiuits()
++    }
++
++    fun removeChiuit(chiuit: Chiuit) {
++        chiuitRepository.removeChiuit(chiuit)
++        retrieveChiuits()
++    }
++
++}
+\ No newline at end of file
+Index: app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitEntity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitEntity.kt	(date 1635968895000)
++++ app/src/main/java/ro/upt/ac/chiuitter/data/database/ChiuitEntity.kt	(date 1635968895000)
+@@ -0,0 +1,15 @@
++package ro.upt.ac.chiuitter.data.database
++
++import androidx.room.ColumnInfo
++import androidx.room.Entity
++import androidx.room.PrimaryKey
++
++
++@Entity(tableName = "chiuits")
++data class ChiuitEntity(
++        @PrimaryKey
++        val timestamp: Long,
++
++        @ColumnInfo(name = "description")
++        val description: String
++)
+\ No newline at end of file
+Index: .gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>*.iml\n.gradle\n/local.properties\n/.idea/caches/build_file_checksums.ser\n/.idea/libraries\n/.idea/modules.xml\n/.idea/workspace.xml\n.DS_Store\n/build\n/captures\n.externalNativeBuild\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .gitignore	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ .gitignore	(date 1635968895000)
+@@ -1,10 +1,7 @@
+ *.iml
+ .gradle
+ /local.properties
+-/.idea/caches/build_file_checksums.ser
+-/.idea/libraries
+-/.idea/modules.xml
+-/.idea/workspace.xml
++/.idea
+ .DS_Store
+ /build
+ /captures
+Index: app/src/main/java/ro/upt/ac/chiuitter/data/database/AppDatabase.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/data/database/AppDatabase.kt	(date 1635968895000)
++++ app/src/main/java/ro/upt/ac/chiuitter/data/database/AppDatabase.kt	(date 1635968895000)
+@@ -0,0 +1,10 @@
++package ro.upt.ac.chiuitter.data.database
++
++import androidx.room.RoomDatabase
++import androidx.room.Database
++
++
++@Database(entities = [ChiuitEntity::class], version = 1)
++abstract class AppDatabase : RoomDatabase() {
++    abstract fun chiuitDao(): ChiuitDao
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/item_chiuit.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<com.google.android.material.card.MaterialCardView\n  xmlns:android=\"http://schemas.android.com/apk/res/android\"\n  android:layout_width=\"match_parent\"\n  android:layout_height=\"wrap_content\"\n  android:layout_margin=\"8dp\">\n\n  <LinearLayout\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"wrap_content\"\n    android:padding=\"12dp\"\n    android:orientation=\"horizontal\">\n\n    <TextView\n      android:id=\"@+id/txv_content\"\n      android:layout_width=\"0dp\"\n      android:layout_height=\"match_parent\"\n      android:layout_weight=\"5\"\n      android:padding=\"4dp\"\n      android:gravity=\"center\"\n      android:text=\"@string/chiuit_example\"\n      android:textSize=\"14sp\"/>\n\n    <ImageButton\n      android:id=\"@+id/ibt_share\"\n      android:layout_width=\"0dp\"\n      android:layout_height=\"match_parent\"\n      android:layout_weight=\"1\"\n      android:background=\"@android:color/transparent\"\n      android:src=\"@drawable/ic_send\"/>\n\n  </LinearLayout>\n\n</com.google.android.material.card.MaterialCardView>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/layout/item_chiuit.xml	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ app/src/main/res/layout/item_chiuit.xml	(date 1635968896000)
+@@ -1,34 +1,46 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <com.google.android.material.card.MaterialCardView
+-  xmlns:android="http://schemas.android.com/apk/res/android"
+-  android:layout_width="match_parent"
+-  android:layout_height="wrap_content"
+-  android:layout_margin="8dp">
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto"
++    android:layout_width="match_parent"
++    android:layout_height="wrap_content"
++    android:layout_margin="8dp">
+ 
+   <LinearLayout
+-    android:layout_width="match_parent"
+-    android:layout_height="wrap_content"
+-    android:padding="12dp"
+-    android:orientation="horizontal">
++      android:layout_width="match_parent"
++      android:layout_height="wrap_content"
++      android:padding="12dp"
++      android:orientation="horizontal">
+ 
++    <!-- Add a new button for delete action -->
++
++    <ImageButton
++        android:id="@+id/ibt_delete"
++        android:layout_width="3dp"
++        android:layout_height="match_parent"
++        android:layout_weight="1"
++        android:background="@android:color/transparent"
++        app:srcCompat="@android:drawable/ic_menu_delete" />
++
+     <TextView
+-      android:id="@+id/txv_content"
+-      android:layout_width="0dp"
+-      android:layout_height="match_parent"
+-      android:layout_weight="5"
+-      android:padding="4dp"
+-      android:gravity="center"
+-      android:text="@string/chiuit_example"
+-      android:textSize="14sp"/>
++        android:id="@+id/txv_content"
++        android:layout_width="0dp"
++        android:layout_height="match_parent"
++        android:layout_weight="5"
++        android:padding="4dp"
++        android:gravity="center"
++        android:text="@string/chiuit_example"
++        android:textSize="14sp"/>
+ 
+     <ImageButton
+-      android:id="@+id/ibt_share"
+-      android:layout_width="0dp"
+-      android:layout_height="match_parent"
+-      android:layout_weight="1"
+-      android:background="@android:color/transparent"
+-      android:src="@drawable/ic_send"/>
++        android:id="@+id/ibt_share"
++        android:layout_width="0dp"
++        android:layout_height="match_parent"
++        android:layout_weight="1"
++        android:background="@android:color/transparent"
++        android:src="@drawable/ic_send"/>
+ 
++
+   </LinearLayout>
+ 
+ </com.google.android.material.card.MaterialCardView>
+\ No newline at end of file
+Index: app/src/main/java/ro/upt/ac/chiuitter/data/database/RoomDatabase.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/data/database/RoomDatabase.kt	(date 1635968895000)
++++ app/src/main/java/ro/upt/ac/chiuitter/data/database/RoomDatabase.kt	(date 1635968895000)
+@@ -0,0 +1,21 @@
++package ro.upt.ac.chiuitter.data.database
++
++import android.content.Context
++import androidx.room.Room
++
++
++object RoomDatabase {
++
++    private var appDatabase: AppDatabase? = null
++
++    fun getDb(context: Context): AppDatabase {
++        if (appDatabase == null)
++            appDatabase = Room.databaseBuilder(context, AppDatabase::class.java, "chiuit-db")
++                    .allowMainThreadQueries()
++                    .build()
++
++        return appDatabase!!
++    }
++
++
++}
+\ No newline at end of file
+Index: app/src/main/java/ro/upt/ac/chiuitter/viewmodel/HomeViewModelFactory.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/viewmodel/HomeViewModelFactory.kt	(date 1635968896000)
++++ app/src/main/java/ro/upt/ac/chiuitter/viewmodel/HomeViewModelFactory.kt	(date 1635968896000)
+@@ -0,0 +1,14 @@
++package ro.upt.ac.chiuitter.viewmodel
++
++import androidx.lifecycle.ViewModel
++import androidx.lifecycle.ViewModelProvider
++import ro.upt.ac.chiuitter.domain.ChiuitRepository
++
++class HomeViewModelFactory(private val chiuitRepository: ChiuitRepository) : ViewModelProvider.NewInstanceFactory() {
++
++    @Suppress("UNCHECKED_CAST")
++    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
++        return HomeViewModel(chiuitRepository) as T
++    }
++
++}
+\ No newline at end of file
+Index: .idea/dictionaries/claug.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><component name=\"ProjectDictionaryState\">\n  <dictionary name=\"claug\">\n    <words>\n      <w>chiuit</w>\n    </words>\n  </dictionary>\n</component>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- .idea/dictionaries/claug.xml	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ .idea/dictionaries/claug.xml	(date 1635968895000)
+@@ -2,6 +2,7 @@
+   <dictionary name="claug">
+     <words>
+       <w>chiuit</w>
++      <w>chiuits</w>
+     </words>
+   </dictionary>
+ </component>
+\ No newline at end of file
+Index: app/src/main/java/ro/upt/ac/chiuitter/domain/Chiuit.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/domain/Chiuit.kt	(date 1635968895000)
++++ app/src/main/java/ro/upt/ac/chiuitter/domain/Chiuit.kt	(date 1635968895000)
+@@ -0,0 +1,3 @@
++package ro.upt.ac.chiuitter.domain
++
++data class Chiuit(val timestamp : Long, val description : String)
+\ No newline at end of file
+Index: gradle/wrapper/gradle-wrapper.properties
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>#Thu Oct 10 13:55:56 EEST 2019\ndistributionBase=GRADLE_USER_HOME\ndistributionPath=wrapper/dists\nzipStoreBase=GRADLE_USER_HOME\nzipStorePath=wrapper/dists\ndistributionUrl=https\\://services.gradle.org/distributions/gradle-5.4.1-all.zip\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- gradle/wrapper/gradle-wrapper.properties	(revision ca3ddf0b8cf7adf09b0b3a962dc2aa7e2a9b7f4b)
++++ gradle/wrapper/gradle-wrapper.properties	(date 1635968896000)
+@@ -1,6 +1,6 @@
+-#Thu Oct 10 13:55:56 EEST 2019
++#Tue Oct 12 23:52:20 EEST 2021
+ distributionBase=GRADLE_USER_HOME
+ distributionPath=wrapper/dists
+ zipStoreBase=GRADLE_USER_HOME
+ zipStorePath=wrapper/dists
+-distributionUrl=https\://services.gradle.org/distributions/gradle-5.4.1-all.zip
++distributionUrl=https\://services.gradle.org/distributions/gradle-6.5-all.zip
+Index: app/src/main/java/ro/upt/ac/chiuitter/domain/ChiuitRepository.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/ro/upt/ac/chiuitter/domain/ChiuitRepository.kt	(date 1635968895000)
++++ app/src/main/java/ro/upt/ac/chiuitter/domain/ChiuitRepository.kt	(date 1635968895000)
+@@ -0,0 +1,7 @@
++package ro.upt.ac.chiuitter.domain
++
++interface ChiuitRepository {
++    fun getAll() : List<Chiuit>
++    fun addChiuit(chiuit: Chiuit)
++    fun removeChiuit(chiuit: Chiuit)
++}
+\ No newline at end of file

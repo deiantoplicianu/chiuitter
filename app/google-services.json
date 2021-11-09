@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1022391038298",
+    "project_id": "smalab-9dd5e",
+    "storage_bucket": "smalab-9dd5e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1022391038298:android:6da2c8162fb168c30d4363",
+        "android_client_info": {
+          "package_name": "ro.upt.ac.chiuitter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1022391038298-7dkjhpmgdr5oicspb5scaq5g31484sd8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMTecfuI9HBDSnqYq45y_RrwHS-4j07f8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1022391038298-7dkjhpmgdr5oicspb5scaq5g31484sd8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
